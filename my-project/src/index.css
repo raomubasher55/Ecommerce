@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Define the custom-select class */
+.custom-select.no-border .ant-select-selector {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Handle focus and active state */
+.custom-select.no-border .ant-select-selector:focus,
+.custom-select.no-border .ant-select-selector:active,
+.custom-select.no-border .ant-select-focused .ant-select-selector {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Additional styles to handle Ant Design specific focus classes */
+.custom-select.no-border .ant-select-selector:focus-visible {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.custom-select.no-border .ant-select-selection-item {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Remove border from the hidden input */
+.custom-select.no-border .ant-select-selector input {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
