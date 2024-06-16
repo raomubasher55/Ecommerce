@@ -7,6 +7,7 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({extended:true}))
 router.post('/signup', signupValidator , authController.signupUser );
 router.post('/login', loginValidator , authController.loginUser );
+// router.put('/profile-update' , authController.updateProfile)
 
 // router.get('/mail-verification' , authController.mailVerification );
 // router.get('/forgetpassword' , authController.resetPassword);

@@ -12,7 +12,7 @@ const AuthProvider = ({ children }) => {
         setAuth({
             ...auth,
             user: parseData.user,
-            token: parseData.token,
+            token: parseData.accessToken,
             tokenType: parseData.tokenType
         })
       }

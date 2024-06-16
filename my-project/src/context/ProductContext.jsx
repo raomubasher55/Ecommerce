@@ -1,5 +1,5 @@
-import { useState, useEffect, createContext, useContext , useCallback } from "react";
-import { useNavigate , useParams } from "react-router-dom";
+import { useState, useEffect, createContext, useContext, useCallback , } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 
@@ -9,13 +9,19 @@ const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [singleProduct, setSingleProduct] = useState([]);
   const [images, setImages] = useState({});
+  const [total, setTotal] = useState(0);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [categoryProducts, setCategoryProducts] = useState([]);
+  const [category, setCategory] = useState([]);
+  // const [page, setPage] = useState(1);
+  const [productsList, setProductsList] = useState([]);
   const navigate = useNavigate();
   const params = useParams();
 
+
   const user = localStorage.getItem('auth');
   const parsedData = JSON.parse(user)
-  const token = parsedData.accessToken;
-
+  const token = parsedData ? parsedData.accessToken : null;
   //get Single Product
   const getSingleProduct = useCallback(async () => {
     try {
@@ -24,16 +30,18 @@ const ProductProvider = ({ children }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-      })
+      });
       const data = await response.json();
       if (data.success) {
-        setSingleProduct(data?.products);
+        setSingleProduct(data.products);
+        similarProducts(data.products._id , data.products.category._id);
       }
     } catch (error) {
       console.log(error);
-      toast.error('Somethine went wrong while getting single products')
+      toast.error('Something went wrong while getting single products');
     }
   }, [params.slug]);
+
 
   //Get All Products
   const getAllProducts = async () => {
@@ -132,7 +140,7 @@ const ProductProvider = ({ children }) => {
         // console.log(data);
         img[id] = data.Image;
       }
-      setImages(img)  
+      setImages(img)
     }
     catch (error) {
       console.log(error);
@@ -141,7 +149,7 @@ const ProductProvider = ({ children }) => {
   }
 
   //update Product
-  const updateProduct = async (name, description, quantity, price, category, image, shipping , id) => {
+  const updateProduct = async (name, description, quantity, price, category, image, shipping, id) => {
     const productData = new FormData();
     productData.append('name', name)
     productData.append('description', description)
@@ -153,27 +161,24 @@ const ProductProvider = ({ children }) => {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/update-product/${id}`, {
       method: "PUT",
       // credentials: "include",
-      headers: {
-        'Authorization': token
-      },
+      headers: token ? { 'Authorization': token } : {},
       body: productData
     });
     const data = await response.json();
     if (data.success) {
       toast.success(data.message, {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
       });
       getAllProducts();
       navigate('/dashboard/admin/products')
     } else {
-      console.log(data);
       if (data.errors) {
         toast.error(data.errors[0].msg, {
           position: "top-center",
@@ -191,7 +196,7 @@ const ProductProvider = ({ children }) => {
   };
 
   //delete Product
-  const deleteProduct = async (id)=>{
+  const deleteProduct = async (id) => {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/delete-product/${id}`, {
       method: "DELETE",
       headers: {
@@ -230,18 +235,124 @@ const ProductProvider = ({ children }) => {
 
     }
   }
+  //Filter Products
+  const filterProducts = async (checked, radio) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/product-filter`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          checked: checked,
+          radio: radio,
+        }),
+      });
+      const data = await response.json();
+      setProductsList(data?.products || []);
+    } catch (error) {
+      console.log('Error:', error);
+    }
+  };
+
+  //get Total Product
+  const getTotalProduct = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/count-product`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      setTotal(data?.total);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  //Product List
+  const ListOfProductFuntion = async (page) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/list-product/${page}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      setProductsList(data?.productsList);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  //Load More
+  const loadMore = async (page) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/list-product/${page}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      setProductsList([...productsList, ...data?.productsList])
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+//get similar products
+const similarProducts = async (pid ,cid) => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/related-product/${pid}/${cid}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await response.json();
+    setRelatedProducts(data?.product)
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+//get Categroy wise Products
+const categoryWiseProducts = async () => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/category-product/${params.slug}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await response.json();
+    setCategoryProducts(data?.products);
+    setCategory(data?.category);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 
   useEffect(() => {
     getAllProducts();
+    getTotalProduct();
   }, [])
 
   useEffect(() => {
-    getSingleProduct();
-  }, [getSingleProduct]);
+    if(params.slug){
+     getSingleProduct();
+    categoryWiseProducts();
+    }
+  }, [params.slug , getSingleProduct]);
 
 
   return (
-    <ProductContext.Provider value={{ products, createProduct, images , singleProduct , updateProduct , deleteProduct }} >
+    <ProductContext.Provider value={{ products, createProduct, images, singleProduct, updateProduct, deleteProduct, filterProducts, getAllProducts, total, productsList, ListOfProductFuntion, loadMore ,relatedProducts , categoryProducts , category }} >
       {children}
     </ProductContext.Provider>
   );

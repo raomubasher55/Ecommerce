@@ -32,7 +32,7 @@ const Login = () => {
                 }),
             });
             const data = await response.json();
-            console.log(data);
+            // console.log(data);   
             if (!data.success) {
                 if (data.errors) {
                     toast.error(data.errors[0].msg, {
@@ -75,7 +75,7 @@ const Login = () => {
                     role: data.role
                 });
                 localStorage.setItem('auth' , JSON.stringify(data))
-                console.log(location);
+                // console.log(location);
                 navigate(location.state || '/')
             }
         } catch (error) {

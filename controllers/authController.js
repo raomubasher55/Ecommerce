@@ -1,95 +1,89 @@
-
-
-const { validationResult } = require('express-validator')
-const bcrypt = require('bcrypt');
-const userModel = require('../models/userModel');
+const { validationResult } = require("express-validator");
+const bcrypt = require("bcrypt");
+const userModel = require("../models/userModel");
 // const blackListModel = require('../models/blackList');
 // const otpModel = require('../models/otp')
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 // const mailer = require('../helper/mailer')
-const randomString = require('randomstring');
+const randomString = require("randomstring");
 // const passwordResetModel = require('../models/resetPassword');
 // const { deleteFile } = require('../helper/deleteFile');
-const path = require('path');
+const path = require("path");
 // const { oneMinuteExpiry, threeMinuteExpiry } = require('../helper/otpValidator');
 
-
 const otpGernator = async () => {
-    return Math.floor(1000 + Math.random() * 9000)
-}
+  return Math.floor(1000 + Math.random() * 9000);
+};
 
 //siginup user
 const signupUser = async (req, res) => {
-    try {
-
-        //Express  validation 
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(200).json({
-                success: false,
-                msg: 'Errors',
-                errors: errors.array()
-            })
-        }
-
-        const { name, email, password, mobile, answer } = req.body;
-        const isExistUser = await userModel.findOne({ email });
-        if (isExistUser) {
-            return res.status(200).json({
-                success: false,
-                msg: "Email already registered"
-            });
-        }
-
-        const hashPassword = await bcrypt.hash(password, 10);
-        const user = new userModel({
-            name,
-            email,
-            password: hashPassword,
-            mobile,
-            answer,
-            // image: 'images/' + req.file.filename
-        });
-        const userData = await user.save();
-
-        //     // const msg = `<p>Hi ${name}, please <a href="http://127.0.0.1:3000/mail-verification?id=${userData._id}">verify your email address</a>.</p>`;
-
-        //     const msg = `
-        //     <p>Hi ${name},</p>
-        //     <p>Welcome to [Your Website/App Name]! We're thrilled to have you on board.</p>
-        //     <p>To ensure the security of your account, please verify your email address by clicking the link below:</p>
-        //     <p><a href="http://127.0.0.1:3000/mail-verification?id=${userData._id}">Verify Your Email Address</a></p>
-        //     <p>If the above link doesn't work, you can copy and paste the following URL into your browser:</p>
-        //     <p>http://127.0.0.1:3000/mail-verification?id=${userData._id}</p>
-        //     <p>Please note that this link will expire in [Time Duration, e.g., 24 hours], so make sure to verify your email as soon as possible.</p>
-        //     <p>By verifying your email, you'll unlock access to all of our features, including:</p>
-        //     <ul>
-        //       <li>[Feature 1]</li>
-        //       <li>[Feature 2]</li>
-        //       <li>[Feature 3]</li>
-        //       <!-- Add more features as needed -->
-        //     </ul>
-        //     <p>If you didn't sign up for [Your Website/App Name], please disregard this email.</p>
-        //     <p>If you have any questions or need assistance, feel free to contact us at [Your Contact Email].</p>
-        //     <p>Best regards,<br>[Your Name]<br>[Your Position/Role]<br>[Your Website/App Name]</p>
-        //   `;
-
-
-        //     mailer.sendMailer(email, 'Mail Verification ', msg);
-
-        return res.status(200).json({
-            success: true,
-            msg: "Your Account is created is successfuly",
-            data: userData
-        });
-
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            msg: error.message,
-        })
+  try {
+    //Express  validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(200).json({
+        success: false,
+        msg: "Errors",
+        errors: errors.array(),
+      });
     }
-}
+
+    const { name, email, password, mobile, answer } = req.body;
+    const isExistUser = await userModel.findOne({ email });
+    if (isExistUser) {
+      return res.status(200).json({
+        success: false,
+        msg: "Email already registered",
+      });
+    }
+
+    const hashPassword = await bcrypt.hash(password, 10);
+    const user = new userModel({
+      name,
+      email,
+      password: hashPassword,
+      mobile,
+      answer,
+      // image: 'images/' + req.file.filename
+    });
+    const userData = await user.save();
+
+    //     // const msg = `<p>Hi ${name}, please <a href="http://127.0.0.1:3000/mail-verification?id=${userData._id}">verify your email address</a>.</p>`;
+
+    //     const msg = `
+    //     <p>Hi ${name},</p>
+    //     <p>Welcome to [Your Website/App Name]! We're thrilled to have you on board.</p>
+    //     <p>To ensure the security of your account, please verify your email address by clicking the link below:</p>
+    //     <p><a href="http://127.0.0.1:3000/mail-verification?id=${userData._id}">Verify Your Email Address</a></p>
+    //     <p>If the above link doesn't work, you can copy and paste the following URL into your browser:</p>
+    //     <p>http://127.0.0.1:3000/mail-verification?id=${userData._id}</p>
+    //     <p>Please note that this link will expire in [Time Duration, e.g., 24 hours], so make sure to verify your email as soon as possible.</p>
+    //     <p>By verifying your email, you'll unlock access to all of our features, including:</p>
+    //     <ul>
+    //       <li>[Feature 1]</li>
+    //       <li>[Feature 2]</li>
+    //       <li>[Feature 3]</li>
+    //       <!-- Add more features as needed -->
+    //     </ul>
+    //     <p>If you didn't sign up for [Your Website/App Name], please disregard this email.</p>
+    //     <p>If you have any questions or need assistance, feel free to contact us at [Your Contact Email].</p>
+    //     <p>Best regards,<br>[Your Name]<br>[Your Position/Role]<br>[Your Website/App Name]</p>
+    //   `;
+
+    //     mailer.sendMailer(email, 'Mail Verification ', msg);
+
+    return res.status(200).json({
+      success: true,
+      msg: "Your Account is created is successfuly",
+      data: userData,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      msg: error.message,
+    });
+  }
+};
 
 //mail verification
 // const mailVerification = async (req, res) => {
@@ -147,7 +141,6 @@ const signupUser = async (req, res) => {
 //             })
 //         }
 
-
 //         const msg = `
 //         <p>Hi ${name},</p>
 //         <p>Welcome to [Your Website/App Name]! We're thrilled to have you on board.</p>
@@ -167,7 +160,6 @@ const signupUser = async (req, res) => {
 //         <p>If you have any questions or need assistance, feel free to contact us at [Your Contact Email].</p>
 //         <p>Best regards,<br>[Your Name]<br>[Your Position/Role]<br>[Your Website/App Name]</p>
 //       `;
-
 
 //         mailer.sendMailer(email, 'Mail Verification ', msg);
 
@@ -213,7 +205,6 @@ const signupUser = async (req, res) => {
 //         });
 //         await resetData.save();
 
-
 //         mailer.sendMailer(userData.email, 'Forget Password', msg);
 
 //         return res.status(200).json({
@@ -228,7 +219,6 @@ const signupUser = async (req, res) => {
 //     }
 // }
 
-
 //Reset password
 // const resetPassword = async (req, res) => {
 //     try {
@@ -241,217 +231,252 @@ const signupUser = async (req, res) => {
 //         }
 //         return res.render('resetPassword', { resetData })
 
-
 //     } catch (error) {
 //         console.log(error.message);
 //         return res.render('404');
 //     }
 // }
 
-
 //updatePassword
 const updatePassword = async (req, res) => {
-    try {
-        const { user_id, password, cpassword } = req.body;
-        const resetData = await passwordResetModel.findOne({ user_id });
+  try {
+    const { user_id, password, cpassword } = req.body;
+    const resetData = await passwordResetModel.findOne({ user_id });
 
-        if (password !== cpassword) {
-            return res.render('resetPassword', { resetData, error: "Confirm password is not matched" })
-        }
-
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const user = await userModel.findByIdAndUpdate({ _id: resetData.user_id }, {
-            $set: {
-                password: hashedPassword
-            }
-        })
-        await passwordResetModel.deleteMany({ user_id });
-        return res.redirect('/resetpassword');
-    } catch (error) {
-        console.log("updatepassword");
-        return res.render('404')
+    if (password !== cpassword) {
+      return res.render("resetPassword", {
+        resetData,
+        error: "Confirm password is not matched",
+      });
     }
-}
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await userModel.findByIdAndUpdate(
+      { _id: resetData.user_id },
+      {
+        $set: {
+          password: hashedPassword,
+        },
+      }
+    );
+    await passwordResetModel.deleteMany({ user_id });
+    return res.redirect("/resetpassword");
+  } catch (error) {
+    console.log("updatepassword");
+    return res.render("404");
+  }
+};
 
 //success Reset password
 const successTesetPassword = async (req, res) => {
-    try {
-        return res.render('reset-success')
-    } catch (error) {
-        console.log("not success");
-        return res.render('404')
-    }
-}
+  try {
+    return res.render("reset-success");
+  } catch (error) {
+    console.log("not success");
+    return res.render("404");
+  }
+};
 
 const gernateAccessToken = async (user) => {
-    const token = jwt.sign(user, process.env.ACCESS_SECRET_TOKEN, { expiresIn: "30d" });
-    return token;
-}
+  const token = jwt.sign(user, process.env.ACCESS_SECRET_TOKEN, {
+    expiresIn: "30d",
+  });
+  return token;
+};
 
 const gernateRefreshToken = async (user) => {
-    const token = jwt.sign(user, process.env.ACCESS_SECRET_TOKEN, { expiresIn: "6h" });
-    return token;
-}
+  const token = jwt.sign(user, process.env.ACCESS_SECRET_TOKEN, {
+    expiresIn: "6h",
+  });
+  return token;
+};
 
 //loin user
 const loginUser = async (req, res) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(200).json({
-                success: false,
-                msg: 'Errors',
-                errors: errors.array()
-            })
-        }
-
-        const { password, email } = req.body;
-        const userData = await userModel.findOne({ email });
-        if (!userData) {
-            return res.status(400).json({
-                success: false,
-                message: "Incorrect password or Email"
-            });
-        }
-
-        const isMatchPassword = await bcrypt.compare(password, userData.password);
-        if (!isMatchPassword) {
-            return res.status(400).json({
-                success: false,
-                message: "Incorrect Password or Email"
-            });
-        }
-        if (userData.isVerified == 0) {
-            return res.status(401).json({
-                success: false,
-                message: "Please verify your account"
-            })
-        }
-        const accessToken = await gernateAccessToken({ user: userData });
-        // const refreshToken = await gernateRefreshToken({ user: userData });
-
-        return res.status(200).json({
-            success: true,
-            message: "You logined successfully",
-            user: userData,
-            accessToken: accessToken,
-            // refreshToken: refreshToken,
-            tokenType: "Bearer"
-        })
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            msg: error.message,
-        })
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(200).json({
+        success: false,
+        msg: "Errors",
+        errors: errors.array(),
+      });
     }
-}
+
+    const { password, email } = req.body;
+    const userData = await userModel.findOne({ email });
+    if (!userData) {
+      return res.status(400).json({
+        success: false,
+        message: "Incorrect password or Email",
+      });
+    }
+
+    const isMatchPassword = await bcrypt.compare(password, userData.password);
+    if (!isMatchPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Incorrect Password or Email",
+      });
+    }
+    if (userData.isVerified == 0) {
+      return res.status(401).json({
+        success: false,
+        message: "Please verify your account",
+      });
+    }
+    const accessToken = await gernateAccessToken({ user: userData });
+    // const refreshToken = await gernateRefreshToken({ user: userData });
+
+    return res.status(200).json({
+      success: true,
+      message: "You logined successfully",
+      user: userData,
+      accessToken: accessToken,
+      // refreshToken: refreshToken,
+      tokenType: "Bearer",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      msg: error.message,
+    });
+  }
+};
 
 //Profile
 const userProfile = async (req, res) => {
-    try {
-
-        return res.status(200).json({
-            success: true,
-            message: "User Profile  Data",
-            data: req.user
-        })
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            msg: error.message,
-        })
-    }
-}
+  try {
+    return res.status(200).json({
+      success: true,
+      message: "User Profile  Data",
+      data: req.user,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      msg: error.message,
+    });
+  }
+};
 
 //update Profile
 const updateProfile = async (req, res) => {
     try {
-        const { name, mobile } = req.body;
-
-        const data = { name, mobile, }
-
-        const user_id = req.user.user._id;
-        if (req.file !== undefined) {
-            data.image = 'images/' + req.file.filename;
-            const oldUser = await userModel.findOne({ _id: user_id });
-            const oldFilePath = path.join(__dirname, '../public/' + oldUser.image);
-            deleteFile(oldFilePath);
-        }
-
-        const userData = await userModel.findByIdAndUpdate({ _id: user_id }, {
-            $set: data
-        }, { new: true })
-
-        return res.status(200).json({
-            success: true,
-            message: "User Data updated successfully",
-            data: userData
-        })
-    } catch (error) {
-        return res.status(400).json({
+      const { name, mobile, email, password, address } = req.body;
+      let data = { name, mobile, email, address };
+        console.log(address);
+      const user_id = req.user.user._id;
+  
+      // Handle file upload
+      if (req.file) {
+        data.image = "images/" + req.file.filename;
+        const oldUser = await userModel.findOne({ _id: user_id });
+        const oldFilePath = path.join(__dirname, "../public/" + oldUser.image);
+        deleteFile(oldFilePath);
+      }
+  
+      // Password validation and hashing
+      if (password) {
+        if (password.length < 6) {
+          return res.status(400).json({
             success: false,
-            message: error.message
-        })
+            message: "Password must be at least 6 characters long",
+          });
+        }
+        const hashPassword = await bcrypt.hash(password, 10);
+        data.password = hashPassword;
+      }
+  
+      // Get current user data for fallback values
+      const userData = await userModel.findById(user_id);
+  
+      data = {
+        name: name || userData.name,
+        mobile: mobile || userData.mobile,
+        email: email || userData.email,
+        address: address || userData.address,
+        password: data.password || userData.password,
+        image: data.image || userData.image,
+      };
+  
+      const updatedUser = await userModel.findByIdAndUpdate(
+        user_id,
+        { $set: data },
+        { new: true }
+      );
+  
+      return res.status(200).json({
+        success: true,
+        message: "User data updated successfully",
+        data: updatedUser,
+      });
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
     }
-}
+  };
+  
 
 const refreshToken = async (req, res) => {
-    try {
-        //User is saved in Logined middlewire so ,
-        const user_id = req.user.user._id;
+  try {
+    //User is saved in Logined middlewire so ,
+    const user_id = req.user.user._id;
 
-        const userData = await userModel.findOne({ _id: user_id });
-        const accessToken = await gernateAccessToken({ user: userData });
-        const refreshToken = await gernateRefreshToken({ user: userData });
+    const userData = await userModel.findOne({ _id: user_id });
+    const accessToken = await gernateAccessToken({ user: userData });
+    const refreshToken = await gernateRefreshToken({ user: userData });
 
-        return res.status(200).json({
-            success: true,
-            message: "Token Refreshed",
-            userData: userData,
-            accessToken: accessToken,
-            refreshToken: refreshToken
-        })
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            message: error.message
-        })
-    }
-}
+    return res.status(200).json({
+      success: true,
+      message: "Token Refreshed",
+      userData: userData,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
-//logout 
+//logout
 const logout = async (req, res) => {
-    try {
-        const token = req.body.token || req.query.token || req.headers['authorization'];
-        if (!token) {
-            return res.status(400).json({
-                success: false,
-                message: "Token not provided"
-            });
-        }
-
-        const bearer = token.split(" ");
-        const bearerToken = bearer[1];
-
-        const tokenBlackList = new blackListModel({
-            token: bearerToken
-        });
-
-        await tokenBlackList.save();
-
-        res.setHeader('Clear-Site-Data', ' "cookies" , "storage"');
-        return res.status(200).json({
-            success: true,
-            message: "You are logged out"
-        });
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            message: error.message
-        });
+  try {
+    const token =
+      req.body.token || req.query.token || req.headers["authorization"];
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        message: "Token not provided",
+      });
     }
+
+    const bearer = token.split(" ");
+    const bearerToken = bearer[1];
+
+    const tokenBlackList = new blackListModel({
+      token: bearerToken,
+    });
+
+    await tokenBlackList.save();
+
+    res.setHeader("Clear-Site-Data", ' "cookies" , "storage"');
+    return res.status(200).json({
+      success: true,
+      message: "You are logged out",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
 
 // const sendOTP = async (req, res) => {
@@ -492,7 +517,6 @@ const logout = async (req, res) => {
 //             }
 //         }
 
-
 //         //This function provide the current date and time
 //         const currentDate = new Date();
 //         await otpModel.findOneAndUpdate(
@@ -523,7 +547,6 @@ const logout = async (req, res) => {
 //             msg: "OTP is send to your mail , please Check and verify ",
 //             data: userData
 //         });
-
 
 //     } catch (error) {
 //         return res.status(400).json({
@@ -585,51 +608,50 @@ const logout = async (req, res) => {
 //     }
 // }
 
-
 const forgetPasswordByQuestion = async (req, res) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                success: false,
-                errors: errors.array()
-            })
-        }
-        const { email, answer, newpassword } = req.body;
-        const user = await userModel.findOne({ email });
-        if (!user) {
-            return res.status(400).json({
-                success: false,
-                message: 'User Not Found'
-            });
-        }
-        const hashedPassword = await bcrypt.hash(newpassword, 10);
-        await userModel.findByIdAndUpdate(user._id, { password: hashedPassword });
-        return res.status(200).json({
-            success: true,
-            message: "Password Successfully Update"
-        });
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            message: error.message
-        });
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array(),
+      });
     }
-}
+    const { email, answer, newpassword } = req.body;
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User Not Found",
+      });
+    }
+    const hashedPassword = await bcrypt.hash(newpassword, 10);
+    await userModel.findByIdAndUpdate(user._id, { password: hashedPassword });
+    return res.status(200).json({
+      success: true,
+      message: "Password Successfully Update",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 module.exports = {
-    signupUser,
-    loginUser,
-    // mailVerification,
-    // sendMailVerfication,
-    // forgetpassword,
-    // resetPassword,
-    updatePassword,
-    successTesetPassword,
-    userProfile,
-    updateProfile,
-    refreshToken,
-    logout,
-    forgetPasswordByQuestion,
-    // sendOTP,
-    // verfiyOTP
-}
+  signupUser,
+  loginUser,
+  // mailVerification,
+  // sendMailVerfication,
+  // forgetpassword,
+  // resetPassword,
+  updatePassword,
+  successTesetPassword,
+  userProfile,
+  updateProfile,
+  refreshToken,
+  logout,
+  forgetPasswordByQuestion,
+  // sendOTP,
+  // verfiyOTP
+};

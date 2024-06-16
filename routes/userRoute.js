@@ -41,7 +41,7 @@ const storage = multer.diskStorage({
 
   //authenticatied routes
   router.get('/profile' ,isLogined , userController.userProfile);
-  router.post('/updateprofile' , isLogined ,updateProfileValidator , upload.single('image') , userController.updateProfile );
+  router.put('/updateprofile' , isLogined ,updateProfileValidator , upload.single('image') , userController.updateProfile );
   router.post('/refreshToken' ,isLogined, userController.refreshToken);
   router.get('/logout' ,isLogined, userController.logout);
   //forget password by security question

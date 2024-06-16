@@ -36,3 +36,30 @@
     outline: none !important;
     box-shadow: none !important;
 }
+
+
+
+
+.glow-on-hover {
+    transition: box-shadow 0.3s; /* Add transition for smooth effect */
+  }
+  
+  .glow-on-hover:hover {
+    box-shadow: 0 0 20px #fff; /* Change the color and spread radius as per your preference */
+  }
+  
+  /* body{
+    background-color: #141414;
+  } */
+
+  .Invert{
+    filter: invert(1);
+  }
+  
+  .createPin{
+    background:  #141414;
+  }
+  
+  .cardColor{
+    background-color: #ffffff;
+  }

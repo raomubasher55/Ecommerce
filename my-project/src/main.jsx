@@ -15,8 +15,6 @@ import Policy from './Pages/Policy.jsx';
 import PageNotFound from './Pages/PageNotFound.jsx';
 import Signup from './Pages/Auth/Signup.jsx';
 import Login from './Pages/Auth/Login.jsx';
-import { AuthProvider } from './context/AuthContext.jsx';
-import { ProductProvider } from './context/ProductContext.jsx';
 import Dashboard from './Pages/user/Dashboard.jsx';
 import Private from './Components/Routes/Private.jsx';
 import ForgetPassword from './Pages/Auth/ForgetPassword.jsx';
@@ -27,9 +25,13 @@ import CreateProduct from './Pages/Admin/CreateProduct.jsx';
 import Users from './Pages/Admin/Users.jsx';
 import Profile from './Pages/user/Profile.jsx';
 import Orders from './Pages/user/Orders.jsx';
-import { CategoryProvider } from './context/CategoryContext.jsx';
 import Products from './Pages/Admin/Products.jsx';
 import UpdateProduct from './Pages/Admin/UpdateProduct.jsx';
+import Search from './Pages/Search.jsx';
+import ProductDetail from './Pages/ProductDetail.jsx';
+import AllCategories from './Pages/AllCategories.jsx';
+import CategoryProducts from './Pages/CategoryProducts.jsx';
+import Cart from './Pages/Cart.jsx';
 
 
 const router = createBrowserRouter(
@@ -39,7 +41,7 @@ const router = createBrowserRouter(
       <Route path="dashboard" element={<Private />}>
         <Route path='user/profile' element={<Profile />} />
         <Route path='user/orders' element={<Orders />} />
-        <Route path='user' element={<Dashboard />} />
+        {/* <Route path='user' element={<Dashboard />} /> */}
         <Route path='user' element={<Dashboard />} />
       </Route>
       <Route path="dashboard" element={<AdminRoute />}>
@@ -51,6 +53,12 @@ const router = createBrowserRouter(
         <Route path='admin/products' element={<Products />} />
       </Route>
       <Route path="contact" element={<Contact />} />
+      <Route path="search" element={<Search />} />
+      <Route path="product/:slug" element={<ProductDetail />} />
+      <Route path="categories" element={<AllCategories />} />
+      <Route path="category/:slug" element={<CategoryProducts />} />
+      <Route path="category/:slug" element={<CategoryProducts />} />
+      <Route path="cart" element={<Cart />} />
       <Route path="about" element={<About />} />
       <Route path="policy" element={<Policy />} />
       <Route path="signup" element={<Signup />} />
@@ -65,11 +73,11 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     {/* <CategoryProvider> */}
-      {/* <AuthProvider>/ */}
-        {/* <ProductProvider> */}
-          <RouterProvider router={router} />
-        {/* </ProductProvider> */}
-      {/* </AuthProvider> */}
+    {/* <AuthProvider>/ */}
+    {/* <ProductProvider> */}
+    <RouterProvider router={router} />
+    {/* </ProductProvider> */}
+    {/* </AuthProvider> */}
     {/* </CategoryProvider> */}
   </React.StrictMode>
 );
