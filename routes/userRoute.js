@@ -57,7 +57,16 @@ const storage = multer.diskStorage({
       success:true,
       user: 'Logined user '
     })
-  })
+  });
+
+  //get orders
+  router.get('/orders' ,isLogined ,  userController.getOrder);
+
+  //get all orders (Admin)
+  router.get('/all-orders' , isLogined  ,isAdmin , userController.getAllOrder);
+
+  //status Update
+  router.put('/order-status/:orderId' , isLogined , isAdmin , userController.orderStatus)
 
   //otp verification routes
 //   router.post('/sendotp'  , otpMailValidator , userController.sendOTP )

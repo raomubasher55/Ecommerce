@@ -1,11 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import Layout from '../../Components/Layout/Layout';
-import UserMenu from '../../Components/Layout/UserMenu';
-import { useAuth } from '../../context/AuthContext';
-import moment from 'moment';
+import React, { useEffect, useState } from 'react'
+import AdminMenu from '../../Components/Layout/AdminMenu'
+import Layout from '../../Components/Layout/Layout'
+import { toast } from 'react-toastify'
+import { useAuth } from '../../context/AuthContext'
+import moment from 'moment'
 import { useProduct } from '../../context/ProductContext';
+import { Select } from 'antd'
+const { Option } = Select;
 
-const Orders = () => {
+const AdminOrders = () => {
+    const [status, setStatus] = useState(["Not Process", "Processing", "Shipped", "Deliverd", "Cancel"]);
+    const [changeStatus, setChangeStatus] = useState('');
     const [orders, setOrders] = useState([]);
     const { auth } = useAuth();
     const { images } = useProduct();
@@ -31,17 +36,35 @@ const Orders = () => {
         getOrder();
     }, [auth?.token]);
 
+    const handleChange = async (id, value) => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/order-status/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': auth?.token,
+                },
+                body: JSON.stringify({ status: value })
+            });
+            const data = await response.json();
+            console.log(data);
+            getOrder();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
-        <Layout title={'Your Orders'}>
+        <Layout title='All Orders Data'>
             <div className="pt-32 grid grid-cols-3 gap-4">
                 <div className="col-span-1">
-                    <UserMenu />
+                    <AdminMenu />
                 </div>
                 <div className="col-span-2">
-                    <div className="card">Your Orders</div>
+                    <div className='card' >All   Orders</div>
                     {orders?.map((o, i) => (
                         <div key={i}>
-                            <div  className="relative overflow-x-auto mt-3 shadow-md sm:rounded-lg">
+                            <div className="relative overflow-x-auto mt-3 shadow-md sm:rounded-lg">
                                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                         <tr>
@@ -65,7 +88,11 @@ const Orders = () => {
                                     <tbody>
                                         <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                             <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                {o?.status}
+                                                <Select onChange={(value) => handleChange(o._id, value)} defaultValue={o?.status} >
+                                                    {status.map((s, i) => (
+                                                        <Option key={i} value={s} ></Option>
+                                                    ))}
+                                                </Select>
                                             </th>
                                             <td className="px-6 py-4">
                                                 {o?.buyer?.name}
@@ -85,10 +112,10 @@ const Orders = () => {
                             </div>
                             <div className="container">
                                 <div className="flex flex-col justify-between lg:flex-row mb-4">
-                                    {o?.products.map((p , index) => (
+                                    {o?.products.map((p, index) => (
                                         <div key={index} className="flex items-center  mb-4 lg:mb-0">
                                             <img src={images[p._id] ? '/' + images[p._id] : `https://placehold.co/100x100`} alt="Product" className="w-24 h-24 rounded-md mr-4" crossOrigin="anonymous" />
-                                            
+
                                             <div className="flex items-center flex-col">
                                                 <h3 className="text-lg font-semibold">{p.name}</h3>
                                                 <p className="text-lg font-semibold">${p.price}</p>
@@ -102,7 +129,7 @@ const Orders = () => {
                 </div>
             </div>
         </Layout>
-    );
-};
+    )
+}
 
-export default Orders;
+export default AdminOrders

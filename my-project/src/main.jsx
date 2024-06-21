@@ -32,6 +32,7 @@ import ProductDetail from './Pages/ProductDetail.jsx';
 import AllCategories from './Pages/AllCategories.jsx';
 import CategoryProducts from './Pages/CategoryProducts.jsx';
 import Cart from './Pages/Cart.jsx';
+import AdminOrders from './Pages/Admin/AdminOrders.jsx';
 
 
 const router = createBrowserRouter(
@@ -51,6 +52,7 @@ const router = createBrowserRouter(
         <Route path='admin/create-product' element={<CreateProduct />} />
         <Route path='admin/product/:slug' element={<UpdateProduct />} />
         <Route path='admin/products' element={<Products />} />
+        <Route path='admin/orders' element={<AdminOrders />} />
       </Route>
       <Route path="contact" element={<Contact />} />
       <Route path="search" element={<Search />} />
