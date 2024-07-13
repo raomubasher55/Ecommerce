@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext, useCallback , } from "react";
+import { useState, useEffect, createContext, useContext, useCallback, } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -15,9 +15,11 @@ const ProductProvider = ({ children }) => {
   const [category, setCategory] = useState([]);
   // const [page, setPage] = useState(1);
   const [productsList, setProductsList] = useState([]);
+  const [orderProduct, setOrderProduct] = useState([]);
+  const [wishList, setWishList] = useState([]);
   const navigate = useNavigate();
   const params = useParams();
-
+  const { orderId, slug } = params;
 
   const user = localStorage.getItem('auth');
   const parsedData = JSON.parse(user)
@@ -25,7 +27,7 @@ const ProductProvider = ({ children }) => {
   //get Single Product
   const getSingleProduct = useCallback(async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/single-product/${params.slug}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/single-product/${slug}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -34,13 +36,13 @@ const ProductProvider = ({ children }) => {
       const data = await response.json();
       if (data.success) {
         setSingleProduct(data.products);
-        similarProducts(data.products._id , data.products.category._id);
+        similarProducts(data.products._id, data.products.category._id);
       }
     } catch (error) {
       console.log(error);
       toast.error('Something went wrong while getting single products');
     }
-  }, [params.slug]);
+  }, [slug]);
 
 
   //Get All Products
@@ -167,14 +169,14 @@ const ProductProvider = ({ children }) => {
     const data = await response.json();
     if (data.success) {
       toast.success(data.message, {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
       });
       getAllProducts();
       navigate('/dashboard/admin/products')
@@ -303,40 +305,65 @@ const ProductProvider = ({ children }) => {
     }
   }
 
-//get similar products
-const similarProducts = async (pid ,cid) => {
-  try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/related-product/${pid}/${cid}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    const data = await response.json();
-    setRelatedProducts(data?.product)
-  } catch (error) {
-    console.log(error);
+  //get similar products
+  const similarProducts = async (pid, cid) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/related-product/${pid}/${cid}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      setRelatedProducts(data?.product)
+    } catch (error) {
+      console.log(error);
+    }
   }
-}
 
 
-//get Categroy wise Products
-const categoryWiseProducts = async () => {
-  try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/category-product/${params.slug}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    const data = await response.json();
-    setCategoryProducts(data?.products);
-    setCategory(data?.category);
-  } catch (error) {
-    console.log(error);
+  //get Categroy wise Products
+  const categoryWiseProducts = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/category-product/${params.slug}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      setCategoryProducts(data?.products);
+      setCategory(data?.category);
+    } catch (error) {
+      console.log(error);
+    }
   }
-}
 
+  //orderProducts
+  const orderProductsDetail = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/order-product/${orderId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token
+        },
+      });
+      const data = await response.json();
+      if (data.success) {
+        setOrderProduct(data.products);
+        console.log(data.products);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error('Something went wrong while getting single products');
+    }
+  };
+
+  //Wish list product / item
+  const wishProductList = (id)=>{
+
+  }
 
   useEffect(() => {
     getAllProducts();
@@ -344,15 +371,40 @@ const categoryWiseProducts = async () => {
   }, [])
 
   useEffect(() => {
-    if(params.slug){
-     getSingleProduct();
-    categoryWiseProducts();
+    if (slug) {
+      getSingleProduct();
+      categoryWiseProducts();
     }
-  }, [params.slug , getSingleProduct]);
+  }, [slug, getSingleProduct]);
+
+  
+  useEffect(() => {
+    if(orderId) orderProductsDetail();
+  }, [orderId])
+  
 
 
   return (
-    <ProductContext.Provider value={{ products, createProduct, images, singleProduct, updateProduct, deleteProduct, filterProducts, getAllProducts, total, productsList, ListOfProductFuntion, loadMore ,relatedProducts , categoryProducts , category }} >
+    <ProductContext.Provider value={{
+      products,
+      createProduct,
+      images,
+      singleProduct,
+      updateProduct,
+      deleteProduct,
+      filterProducts,
+      getAllProducts,
+      total,
+      productsList,
+      ListOfProductFuntion,
+      loadMore,
+      relatedProducts,
+      categoryProducts,
+      category,
+      orderProduct,
+      wishList,
+      setWishList,
+    }} >
       {children}
     </ProductContext.Provider>
   );

@@ -162,6 +162,7 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+//update the product
 const updateProduct = async (req, res) => {
   try {
     const { name, description, price, category, quantity, shipping } = req.body;
@@ -255,7 +256,7 @@ const productCount = async (req, res) => {
 //list product base on  page
 const productList = async (req, res) => {
   try {
-    const perPage = 6;
+    const perPage = 8;
     const page = req.params.page ? req.params.page : 1;
     const productsList = await productModel
       .find({})
@@ -300,6 +301,7 @@ const searchProducts = async (req, res) => {
   }
 };
 
+//related product
 const relatedProduct = async (req, res) => {
   try {
     const { pid, cid } = req.params;
@@ -344,6 +346,58 @@ const categroyProducts = async (req, res) => {
     });
   }
 };
+
+
+//get product by order id
+const orderById = async (req, res) =>{
+  try {
+    const order = await orderModel.findById(req.params.orderId);
+    console.log(req.params.orderId);
+    if(!order){
+      return res.status(400).json({
+        success: false,
+        message : "order not find"
+      })
+    }
+  
+  
+    const products =[];
+      for(const productId of order.products){
+        const product = await productModel.findById(productId);
+        products.push(product);
+      }
+  
+      return res.status(200).json({
+        success : true,
+        message : "Order and product is found",
+        products
+      })
+  } catch (error) {
+    console.error("Error in order Detail", error); // Log the error
+    return res.status(400).json({
+      success: false,
+      msg: error.message,
+      message: "Error while getting order deatail product",
+    });
+  }
+
+  // const products = [];
+    // for (const productId of order.products) {
+    //   const product = await productModel.findById(productId);
+    //   products.push(product);
+    // }
+
+    // return res.status(200).json({
+    //   success: true,
+    //   message: "Order and products found",
+    //   order: {
+    //     ...order._doc,
+    //     products: products
+    //   },
+    // });
+
+
+}
 
 //payment gateway api
 //token
@@ -431,6 +485,8 @@ const braintreePayment = async (req, res) => {
 
 
 
+
+
 module.exports = {
   createProduct,
   getAllProducts,
@@ -446,4 +502,5 @@ module.exports = {
   categroyProducts,
   braintreeToken,
   braintreePayment,
+  orderById,
 };

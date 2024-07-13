@@ -55,6 +55,13 @@ router.put(
   upload.single("image"),
   productController.updateProduct
 );
+//get product by order id
+router.get(
+  "/order-product/:orderId", 
+  isLogined,
+  isAdmin,
+  productController.orderById
+);
 router.post("/product-filter", productController.filterProduct);
 //product counter
 router.get("/count-product", productController.productCount);
@@ -63,15 +70,19 @@ router.get("/list-product/:page", productController.productList);
 //search Products
 router.get("/search/:keyword", productController.searchProducts);
 //similar product
-router.get('/related-product/:pid/:cid' , productController.relatedProduct);
+router.get("/related-product/:pid/:cid", productController.relatedProduct);
 //Category wise Products
-router.get('/category-product/:slug' , productController.categroyProducts)
+router.get("/category-product/:slug", productController.categroyProducts);
 
 //payment routes
 
 //token
-router.get('/braintree/token' , productController.braintreeToken);
+router.get("/braintree/token", productController.braintreeToken);
 //payments
-router.post('/braintree/payment' , isLogined , productController.braintreePayment);
+router.post(
+  "/braintree/payment",
+  isLogined,
+  productController.braintreePayment
+);
 
 module.exports = router;

@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Link, useNavigate , useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Layout from '../../Components/Layout/Layout';
 import { FaRegEye } from "react-icons/fa6";
@@ -9,7 +9,7 @@ import { useAuth } from '../../context/AuthContext';
 const Login = () => {
     const [credential, setCredential] = useState({ email: "", password: "" });
     const [password, setPassword] = useState(true);
-    const {auth , setAuth} = useAuth();
+    const { auth, setAuth } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const onChange = (e) => {
@@ -68,13 +68,14 @@ const Login = () => {
                     progress: undefined,
                     theme: "dark",
                 });
-                setAuth({...auth , 
-                    user : data.user,
+                setAuth({
+                    ...auth,
+                    user: data.user,
                     token: data.accessToken,
                     tokenType: data.tokenType,
                     role: data.role
                 });
-                localStorage.setItem('auth' , JSON.stringify(data))
+                localStorage.setItem('auth', JSON.stringify(data))
                 // console.log(location);
                 navigate(location.state || '/')
             }
@@ -94,38 +95,31 @@ const Login = () => {
     return (
         <>
             <Layout>
-                <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-                    <div className="max-w-md w-full space-y-8 shadow-lg p-4">
-                        <div>
-                            <img className="mx-auto md:w-11 md:h-11 lg:w-12 lg:h-12 w-10 h-10" src="/logo.png" alt="Pin logo" />
-                            <h2 className="mt-6 text-center lg:text-3xl md:text-2xl text-xl font-extrabold text-gray-900">Login to your account</h2>
-                        </div>
-                        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-                            <input onChange={onChange} value={credential.email} type="text" name="email" placeholder="Email" className="mb-4 block w-full p-2 border border-gray-300 rounded-md focus:outline-none" />
-                            <div className=' mb-4 flex justify-between items-center w-full bg-white  border border-gray-300 rounded-md    '>
-                                <input onChange={onChange} value={credential.password} type={password ? 'password' : 'text'} name="password" placeholder="Password" className="   p-2  w-full rounded-md focus:outline-none" />
+                <div className="flex items-center justify-center min-h-screen bg-background pt-20 dark:bg-black">
+                    <div className="bg-card dark:bg-card p-8 rounded-lg shadow-l bg-slate-100 w-full max-w-md flex flex-col items-">
+                        <p className="text-3xl font-bold mb-6">Login your account</p>
+                        <form onSubmit={handleSubmit} className="w-full">
+                            <div className="mb-4">
+                                <input type="email" placeholder="Email" name='email' onChange={onChange} value={credential.email} className="w-full p-3   border border-zinc-300 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400" />
+                            </div>
+                            <div className="mb-4 relative">
+                                <input
+                                    onChange={onChange} value={credential.password} type={password ? 'password' : 'text'} name="password" placeholder="Password"
+                                    className="w-full p-3 border border-zinc-300 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 pr-10"
+                                />
+                                <button type="button" className="absolute inset-y-0 right-0 flex items-center px-3 text-zinc-400 dark:text-zinc-500" >
                                 <span onClick={() => setPassword(!password)} className='pr-4 inline-block' >{password ? <FaRegEye /> : <FaRegEyeSlash />}  </span>
+                                </button>
                             </div>
-                            <button type="submit" className="w-full py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded-md">Login My Account</button>
-                            {/* {error && <p className="text-red-500 mt-2">{error}</p>} */}
-                            <div className="text-center">
-                                <Link to="/forget-password" className="text-blue-500">Forgot your password?</Link>
-                            </div>
+                            <button type="submit" className="w-full bg-blue-500 dark:bg-blue-500 text-white dark:text-white p-3 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-600">Login</button>
+                            <p className="text-center mt-4 text-sm text-blue-500 dark:text-blue-400 hover:underline">Forgot your password?</p>
                         </form>
-                        <footer className="text-xs text-gray-600">
-                            <p>
-                                By continuing, you agree to Pinterest's
-                                <b className="font-bold"> Terms of Service </b>
-                                and
-                                <b className="font-bold"> Privacy Policy. </b>
-                            </p>
+                        <div className="text-center mt-4 text-sm text-primary dark:text-primary-foreground">
+                            By continuing, you agree to CoveCart's <a href="#" className="underline">Terms of Service</a> and <a href="#" className="underline">Privacy Policy</a>
                             <hr className="my-4 border-t border-gray-400" />
-                            <div className="text-center">
-                                <Link to="/signup" className="text-blue-500">Not on Pinterest yet? Sign up</Link>
-                            </div>
-                        </footer>
+                            <Link to="/signup" className="text-blue-500 block"> New on CoveCart? signup</Link>
+                        </div>
                     </div>
-                    {/* <ToastContainer /> */}
                 </div>
             </Layout>
         </>

@@ -6,6 +6,8 @@ import { useAuth } from '../../context/AuthContext'
 import moment from 'moment'
 import { useProduct } from '../../context/ProductContext';
 import { Select } from 'antd'
+import { Link, useNavigate } from 'react-router-dom'
+import OrderDetail from './OrderDetail'
 const { Option } = Select;
 
 const AdminOrders = () => {
@@ -14,6 +16,7 @@ const AdminOrders = () => {
     const [orders, setOrders] = useState([]);
     const { auth } = useAuth();
     const { images } = useProduct();
+    const navigate = useNavigate();
 
     const getOrder = async () => {
         try {
@@ -25,7 +28,6 @@ const AdminOrders = () => {
                 },
             });
             const data = await response.json();
-            console.log(data.orders);
             setOrders(data.orders);
         } catch (error) {
             console.log(error);
@@ -47,24 +49,25 @@ const AdminOrders = () => {
                 body: JSON.stringify({ status: value })
             });
             const data = await response.json();
-            console.log(data);
             getOrder();
         } catch (error) {
             console.log(error);
         }
     }
 
+
+
     return (
         <Layout title='All Orders Data'>
-            <div className="pt-32 grid grid-cols-3 gap-4">
+            <div className="pt-32 grid grid-cols-5 gap-4">
                 <div className="col-span-1">
                     <AdminMenu />
                 </div>
-                <div className="col-span-2">
-                    <div className='card' >All   Orders</div>
+                <div className="col-span-4 mx-12">
+                    <div className='card   ' >All   Orders</div>
                     {orders?.map((o, i) => (
                         <div key={i}>
-                            <div className="relative overflow-x-auto mt-3 shadow-md sm:rounded-lg">
+                            <div className="relative overflow-x-auto my-8 shadow-md sm:rounded-lg">
                                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                         <tr>
@@ -81,7 +84,8 @@ const AdminOrders = () => {
                                                 Payment
                                             </th>
                                             <th scope="col" className="px-6 py-3">
-                                                <span className="sr-only">Quantity</span>
+                                                {/* <span className="">Quantity</span> */}
+                                                Quantity
                                             </th>
                                         </tr>
                                     </thead>
@@ -100,17 +104,17 @@ const AdminOrders = () => {
                                             <td className="px-6 py-4">
                                                 {moment(o?.createdAt).fromNow()}
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-6 py-4 font-semibold text-green-600">
                                                 {o?.payment?.success ? 'Success' : 'Failed'}
                                             </td>
-                                            <td className="px-6 py-4 text-right">
+                                            <td className="px-12 py-4 ">
                                                 <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">{o?.products?.length}</a>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
-                            <div className="container">
+                            {/* <div className="container">
                                 <div className="flex flex-col justify-between lg:flex-row mb-4">
                                     {o?.products.map((p, index) => (
                                         <div key={index} className="flex items-center  mb-4 lg:mb-0">
@@ -123,7 +127,8 @@ const AdminOrders = () => {
                                         </div>
                                     ))}
                                 </div>
-                            </div>
+                            </div> */}
+                            <span onClick={() => navigate(`/dashboard/admin/orders/detail/${o._id}`)}  className='bg-blue-600 p-2 cursor-pointer text-white  rounded-lg  my-3'>more detail</span>
                         </div>
                     ))}
                 </div>

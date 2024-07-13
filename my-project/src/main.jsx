@@ -33,18 +33,24 @@ import AllCategories from './Pages/AllCategories.jsx';
 import CategoryProducts from './Pages/CategoryProducts.jsx';
 import Cart from './Pages/Cart.jsx';
 import AdminOrders from './Pages/Admin/AdminOrders.jsx';
+import OrderDetail from './Pages/Admin/OrderDetail.jsx';
+import WishList from './Pages/user/WishList.jsx';
 
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
+
       <Route index element={<HomePage />} />
+
       <Route path="dashboard" element={<Private />}>
         <Route path='user/profile' element={<Profile />} />
         <Route path='user/orders' element={<Orders />} />
+        <Route path='user/wish-list' element={<WishList />} />
         {/* <Route path='user' element={<Dashboard />} /> */}
         <Route path='user' element={<Dashboard />} />
       </Route>
+
       <Route path="dashboard" element={<AdminRoute />}>
         <Route path='admin' element={<AdminDashboard />} />
         <Route path='admin/users' element={<Users />} />
@@ -53,7 +59,9 @@ const router = createBrowserRouter(
         <Route path='admin/product/:slug' element={<UpdateProduct />} />
         <Route path='admin/products' element={<Products />} />
         <Route path='admin/orders' element={<AdminOrders />} />
+        <Route path='admin/orders/detail/:orderId' element={<OrderDetail />} />
       </Route>
+
       <Route path="contact" element={<Contact />} />
       <Route path="search" element={<Search />} />
       <Route path="product/:slug" element={<ProductDetail />} />

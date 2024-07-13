@@ -6,8 +6,6 @@ import { Link, useNavigate } from 'react-router-dom';
 const ProductDetail = () => {
     const { singleProduct, relatedProducts, images } = useProduct();
     const navigate = useNavigate();
-    // console.log('Single Products  :', singleProduct);
-    // console.log('Related Products  :', relatedProducts);
     return (
         <Layout>
             <div className='pt-24 w-full' >
