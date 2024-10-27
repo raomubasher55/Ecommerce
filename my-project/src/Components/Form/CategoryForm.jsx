@@ -59,11 +59,63 @@ const CategoryForm = ({ getAllCategories }) => {
       console.log(error);
       toast.error("something error while creating a new category");
     }
-  }
+  };
+
+
+    //Create Products
+    const createProduct = async (name, description, quantity, price, category, image, shipping) => {
+      const productData = new FormData();
+      productData.append('name', name)
+      productData.append('description', description)
+      productData.append('price', price)
+      productData.append('quantity', quantity)
+      productData.append('shipping', shipping)
+      productData.append('image', image)
+      productData.append('category', category)
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/create-product/`, {
+        method: "POST",
+        // credentials: "include",
+        headers: {
+          'Authorization': token
+        },
+        body: productData
+      });
+      const data = await response.json();
+      if (data.success) {
+        toast.success(data.message, {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        getAllProducts();
+        navigate('/dashboard/admin/products')
+      } else {
+        console.log(data);
+        if (data.errors) {
+          toast.error(data.errors[0].msg, {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        }
+  
+      }
+    };
+
   return (
     <>
       <button
-        onClick={toggleModal} className="block my-3 text-white bg-green-600 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Add New Category
+        onClick={toggleModal} className="block my-3 text-white bg-green-600 hover:bg-green-800 focus:ring-4 focus:outline-none  font-medium rounded-lg text-sm ml-2 md:px-5 px-2 md:py-2.5 py-1.5 text-center " type="button">Add New Category
       </button>
       {modalVisible && (
         <div

@@ -1,4 +1,4 @@
-const slugify = require("slugify");
+  const slugify = require("slugify");
 const productModel = require("../models/ProductModel");
 const fs = require("fs");
 const { validationResult } = require("express-validator");

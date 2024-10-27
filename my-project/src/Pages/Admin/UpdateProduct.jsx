@@ -8,11 +8,11 @@ const UpdateProduct = () => {
     return (
         <div>
             <Layout title={'Dashboard - Create Product'}>
-                <div className="pt-20 px-6 grid grid-cols-3 gap-4 ">
+                <div className="pt-20 grid grid-cols-5 gap-4 ">
                     <div className="col-span-1">
                         <AdminMenu />
                     </div>
-                    <div className="col-span-2">
+                    <div className="col-span-4">
                         <div className='w-full'>
                             <ProductUpdateForm />
                         </div>

@@ -63,3 +63,83 @@
   .cardColor{
     background-color: #ffffff;
   }
+
+
+
+  
+.bg-image1{
+  background: url('/images/img1.jpg');
+  height: 100vh;
+  /* object-fit: cover; */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position-y: 50px;
+}
+.bg-image2{
+  background: url('/images/img2.webp');
+  height: 100vh;
+  object-fit: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.bg-image3{
+  background: url('/images/img3.webp');
+  height: 100vh;
+  object-fit: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.bg-image4{
+  background: url('images/img4.webp');
+  height: 100vh;
+  object-fit: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.Shadow{
+  box-shadow: 3px 0px 0px 0.1px rgba(128, 128, 128, 0.484);
+  border-bottom: none;
+  min-height: 100%;
+}
+
+/* .bg-image5{
+  background: url('/my-project/public/images/img1.png');
+  height: 100vh;
+  object-fit: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+} */
+
+
+.swiper-container {
+  @apply relative;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  @apply absolute top-1/2 -translate-y-1/2 z-10;
+}
+
+.swiper-button-next {
+  @apply right-10;
+}
+
+.swiper-button-prev {
+  @apply left-0;
+} 
+.transgender {
+  transition: 0.2s all linear;
+}
+
+
+
+
+/* resposiveness */
+.none{
+  display: none;
+}

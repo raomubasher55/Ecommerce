@@ -36,7 +36,7 @@ const CategoryProvider = ({ children }) => {
     }
     useEffect(() => {
         getAllCategories();
-    }, [])
+    }, []);
     
     return (
         <CategoryContext.Provider value={{categories}}>

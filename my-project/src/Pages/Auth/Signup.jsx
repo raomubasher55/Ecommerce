@@ -1,12 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import Layout from '../../Components/Layout/Layout';
 import { FaRegEye } from "react-icons/fa6";
 import { FaRegEyeSlash } from "react-icons/fa6";
 
-const Signup = () => {
-    const [credential, setCredential] = useState({ name: "", email: "", username: "", password: "", mobile: "", answer: "" });
+const Signup = () => {ome
+    const [credential, setCredential] = useState({ name: "", email: "", username: "", password: "", mobile: "", answer: "" , });
     const [password, setPassword] = useState(true);
     const navigate = useNavigate();
 
@@ -29,11 +29,11 @@ const Signup = () => {
                 email: credential.email,
                 mobile: credential.mobile,
                 password: credential.password,
-                answer: credential.answer
+                answer: credential.answer,
+                username: credential.username,
             }),
         });
         const data = await response.json();
-        console.log(data);
         // setSpinner(false);
         if (!data.success) {
             if (data.errors) {
@@ -76,8 +76,7 @@ const Signup = () => {
     };
     return (
         <>
-            <Layout>
-                <div className="flex items-center justify-center min-h-screen bg-background pt-20 dark:bg-black">
+                <div className="flex items-center justify-center min-h-screen bg-background pt-3 dark:bg-black">
                     <div className="bg-card dark:bg-card p-8 rounded-lg shadow-l bg-slate-100 w-full max-w-md flex flex-col items-">
                         {/* <h1 className="text-2xl text-center font-bold mb-4"><img className='h-20 w-20' src="/logo.png" alt="" /></h1> */}
                         <h2 className="text-3xl font-bold mb-2">Welcome to the <span className="text-blue-500 dark:text-blue-400">(CartCove)</span></h2>
@@ -85,6 +84,9 @@ const Signup = () => {
                         <form onSubmit={handleSubmit} className="w-full">
                             <div className="mb-4">
                                 <input type="text" placeholder="Full Name" name='name' onChange={onChange} value={credential.name} className="w-full p-3    border border-zinc-300 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400" />
+                            </div>
+                            <div className="mb-4">
+                                <input type="text" placeholder="Username" name='username' onChange={onChange} value={credential.username} className="w-full p-3    border border-zinc-300 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400" />
                             </div>
                             <div className="mb-4">
                                 <input type="email" placeholder="Email" name='email' onChange={onChange} value={credential.email} className="w-full p-3   border border-zinc-300 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400" />
@@ -114,8 +116,7 @@ const Signup = () => {
                         </div>
                     </div>
                 </div>
-
-            </Layout>
+        <ToastContainer/>
         </>
     )
 }

@@ -16,7 +16,7 @@ const ProductProvider = ({ children }) => {
   // const [page, setPage] = useState(1);
   const [productsList, setProductsList] = useState([]);
   const [orderProduct, setOrderProduct] = useState([]);
-  const [wishList, setWishList] = useState([]);
+  const [wishList,  setWishList] = useState([]);
   const navigate = useNavigate();
   const params = useParams();
   const { orderId, slug } = params;
@@ -40,7 +40,6 @@ const ProductProvider = ({ children }) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error('Something went wrong while getting single products');
     }
   }, [slug]);
 
@@ -182,16 +181,7 @@ const ProductProvider = ({ children }) => {
       navigate('/dashboard/admin/products')
     } else {
       if (data.errors) {
-        toast.error(data.errors[0].msg, {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
+        console.log(data.errors);
       }
 
     }
@@ -206,7 +196,6 @@ const ProductProvider = ({ children }) => {
       },
     });
     const data = await response.json();
-    console.log(data);
     if (data.success) {
       toast.success(data.message, {
         position: "top-center",
@@ -362,8 +351,16 @@ const ProductProvider = ({ children }) => {
 
   //Wish list product / item
   const wishProductList = (id)=>{
-
+    let existingWishList =localStorage.getItem('wishList');
+    if(existingWishList){
+      setWishList(JSON.parse(existingWishList))
+    }
   }
+
+  useEffect(() => {
+    wishProductList();
+  }, [])
+  
 
   useEffect(() => {
     getAllProducts();

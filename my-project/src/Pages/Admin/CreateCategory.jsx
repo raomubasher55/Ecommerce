@@ -7,9 +7,13 @@ import CategoryForm from '../../Components/Form/CategoryForm';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { GrEdit } from "react-icons/gr";
 import UpdateCategory from '../../Components/Form/UpdateCategory'
+import { TiThMenu } from 'react-icons/ti'
+import ResponsiveAdminMenu from '../../Components/Layout/ResponsiveAdminMenu'
 
 const CreateCategory = () => {
   const [categories, setCategories] = useState([]);
+  const [adminMenu, setAdminMenu] = useState(false);
+
   const [id, setId] = useState();
   const [open, setOpen] = useState(false);
 
@@ -85,6 +89,11 @@ const CreateCategory = () => {
       toast.error('Somethine went wrong while Deleting categories')
     }
   }
+
+  const toggleAdminMenu = (status) => {
+    setAdminMenu(status);
+  };
+
   useEffect(() => {
     getAllCategories();
   }, [])
@@ -93,15 +102,20 @@ const CreateCategory = () => {
 
   return (
     <Layout title={'Dashboard -Create Category'}>
-      <div className="p-20 grid grid-cols-3 gap-4 ">
-        <div className="col-span-1">
+      <div className="pt-20 grid grid-cols-5 gap-4 ">
+        <div className="md:col-span-1 none md:block">
           <AdminMenu />
         </div>
-        <div className="col-span-2">
-          <div className="card font-bold text-3xl my-5">Manage Category</div>
+        {adminMenu && <ResponsiveAdminMenu toggleAdminMenu={toggleAdminMenu} />}
+        <div className="md:col-span-4 col-span-5  ">
+          <div className='flex justify-between w-full ' >
+            <div className='block  md:hidden  pt-9 pl-3' onClick={()=>toggleAdminMenu(true)}  ><TiThMenu className='text-xl' /></div>
+            <h1 className="text-xl font-bold mb-4 pt-8 pl-3 ">Manage Category </h1>
+            <div className="text-xl font-bold mb-4 pt-8 pl-3 "> </div>
+          </div>
           <div>
             <CategoryForm getAllCategories={getAllCategories} />
-            <div className="relative overflow-x-auto">
+            <div className="relative overflow-x-auto ">
               <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                   <tr>

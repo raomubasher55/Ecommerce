@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import Layout from '../../Components/Layout/Layout';
 import { FaRegEye } from "react-icons/fa6";
 import { FaRegEyeSlash } from "react-icons/fa6";
@@ -94,8 +94,7 @@ const Login = () => {
     };
     return (
         <>
-            <Layout>
-                <div className="flex items-center justify-center min-h-screen bg-background pt-20 dark:bg-black">
+                <div className="flex items-center justify-center min-h-screen bg-background pt-3 dark:bg-black">
                     <div className="bg-card dark:bg-card p-8 rounded-lg shadow-l bg-slate-100 w-full max-w-md flex flex-col items-">
                         <p className="text-3xl font-bold mb-6">Login your account</p>
                         <form onSubmit={handleSubmit} className="w-full">
@@ -121,7 +120,7 @@ const Login = () => {
                         </div>
                     </div>
                 </div>
-            </Layout>
+                <ToastContainer/>
         </>
     )
 }

@@ -8,15 +8,22 @@ import { useProduct } from '../../context/ProductContext';
 import { Select } from 'antd'
 import { Link, useNavigate } from 'react-router-dom'
 import OrderDetail from './OrderDetail'
+import { TiThMenu } from 'react-icons/ti'
+import ResponsiveAdminMenu from '../../Components/Layout/ResponsiveAdminMenu'
 const { Option } = Select;
 
 const AdminOrders = () => {
     const [status, setStatus] = useState(["Not Process", "Processing", "Shipped", "Deliverd", "Cancel"]);
     const [changeStatus, setChangeStatus] = useState('');
     const [orders, setOrders] = useState([]);
+    const [adminMenu, setAdminMenu] = useState(false);
     const { auth } = useAuth();
     const { images } = useProduct();
     const navigate = useNavigate();
+
+    const toggleAdminMenu = (status) => {
+      setAdminMenu(status);
+    };
 
     const getOrder = async () => {
         try {
@@ -33,6 +40,9 @@ const AdminOrders = () => {
             console.log(error);
         }
     };
+
+  
+
 
     useEffect(() => {
         getOrder();
@@ -59,12 +69,17 @@ const AdminOrders = () => {
 
     return (
         <Layout title='All Orders Data'>
-            <div className="pt-32 grid grid-cols-5 gap-4">
-                <div className="col-span-1">
+            <div className="pt-20 grid grid-cols-5 gap-4">
+                <div className="md:col-span-1 md:block none">
                     <AdminMenu />
                 </div>
-                <div className="col-span-4 mx-12">
-                    <div className='card   ' >All   Orders</div>
+                {adminMenu && <ResponsiveAdminMenu toggleAdminMenu={toggleAdminMenu} />}
+                <div className="md:col-span-4 col-span-5  mx-4 md:mx-12 mb-4">
+                    <div className='flex justify-between w-full ' >
+                        <div className='block  md:hidden  pt-9 pl-3' onClick={()=>toggleAdminMenu(true)}  ><TiThMenu className='text-xl' /></div>
+                        <h1 className="text-xl font-bold mb-4 pt-8 pl-3 ">All Orders </h1>
+                        <div className="text-xl font-bold mb-4 pt-8 pl-3 "> </div>
+                    </div>
                     {orders?.map((o, i) => (
                         <div key={i}>
                             <div className="relative overflow-x-auto my-8 shadow-md sm:rounded-lg">
@@ -128,7 +143,7 @@ const AdminOrders = () => {
                                     ))}
                                 </div>
                             </div> */}
-                            <span onClick={() => navigate(`/dashboard/admin/orders/detail/${o._id}`)}  className='bg-blue-600 p-2 cursor-pointer text-white  rounded-lg  my-3'>more detail</span>
+                            <span onClick={() => navigate(`/dashboard/admin/orders/detail/${o._id}`)} className='bg-blue-600 p-2 cursor-pointer text-white  rounded-lg  my-3'>more detail</span>
                         </div>
                     ))}
                 </div>

@@ -35,6 +35,7 @@ import Cart from './Pages/Cart.jsx';
 import AdminOrders from './Pages/Admin/AdminOrders.jsx';
 import OrderDetail from './Pages/Admin/OrderDetail.jsx';
 import WishList from './Pages/user/WishList.jsx';
+import AllProducts from './Components/allProduct/AllProducts.jsx';
 
 
 const router = createBrowserRouter(
@@ -47,8 +48,8 @@ const router = createBrowserRouter(
         <Route path='user/profile' element={<Profile />} />
         <Route path='user/orders' element={<Orders />} />
         <Route path='user/wish-list' element={<WishList />} />
-        {/* <Route path='user' element={<Dashboard />} /> */}
         <Route path='user' element={<Dashboard />} />
+        <Route path='wishlist' element={<WishList />} />
       </Route>
 
       <Route path="dashboard" element={<AdminRoute />}>
@@ -65,8 +66,8 @@ const router = createBrowserRouter(
       <Route path="contact" element={<Contact />} />
       <Route path="search" element={<Search />} />
       <Route path="product/:slug" element={<ProductDetail />} />
+      <Route path="all-products" element={<AllProducts />} />
       <Route path="categories" element={<AllCategories />} />
-      <Route path="category/:slug" element={<CategoryProducts />} />
       <Route path="category/:slug" element={<CategoryProducts />} />
       <Route path="cart" element={<Cart />} />
       <Route path="about" element={<About />} />
@@ -82,12 +83,6 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    {/* <CategoryProvider> */}
-    {/* <AuthProvider>/ */}
-    {/* <ProductProvider> */}
     <RouterProvider router={router} />
-    {/* </ProductProvider> */}
-    {/* </AuthProvider> */}
-    {/* </CategoryProvider> */}
   </React.StrictMode>
 );

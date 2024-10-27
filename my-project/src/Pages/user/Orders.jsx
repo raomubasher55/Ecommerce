@@ -4,9 +4,12 @@ import UserMenu from '../../Components/Layout/UserMenu';
 import { useAuth } from '../../context/AuthContext';
 import moment from 'moment';
 import { useProduct } from '../../context/ProductContext';
+import ResponsiveUserMenu from '../../Components/Layout/ResponsiveUserMenu';
+import { TiThMenu } from 'react-icons/ti';
 
 const Orders = () => {
     const [orders, setOrders] = useState([]);
+    const [userMenu, setUserMenu] = useState(false);
     const { auth } = useAuth();
     const { images } = useProduct();
 
@@ -27,18 +30,25 @@ const Orders = () => {
         }
     };
 
+    const toggleOnUserMenu = (status) => {
+        setUserMenu(status);
+      };
+
+
+
     useEffect(() => {
         getOrder();
     }, [auth?.token]);
 
     return (
         <Layout title={'Your Orders'}>
-            <div className='pt-28'>
+            <div className='pt-20'>
                 <div className=" grid grid-cols-5 gap-4">
-                    <div className="col-span-1">
+                    <div className="md:col-span-1 none  md:block">
                         <UserMenu />
                     </div>
-                    <div className="col-span-4">
+                    {userMenu &&  <ResponsiveUserMenu toggleOnUserMenu={toggleOnUserMenu} />}
+                    <div className="md:col-span-4 col-span-5">
                         {/* <div className="card">Your Orders</div>
                     {orders?.map((o, i) => (
                         <div key={i}>
@@ -99,18 +109,20 @@ const Orders = () => {
                             </div>
                         </div>
                     ))} */}
-                        <h2 className="text-2xl font-bold mb-4 mx-12">User Orders</h2>
+                        <div className='flex flex-row   ' >
+                            <div className='block  md:hidden  pt-9 pl-3' onClick={()=>toggleOnUserMenu(true)}  ><TiThMenu className='text-xl' /></div>
+                            <h1 className="text-xl font-bold mb-4 pt-8 pl-3 ">Orders</h1>
+                        </div>
                         <hr className='my-5' />
-                        {/*New design  */}  
-                        <div className="flex-1 bg-white shadow-md  mx-12 ">
+                        {/*New design  */}
+                        <div className="flex-1 bg-white shadow-md  md:mx-12 ">
                             {orders?.map((o, i) => (
                                 <div key={i} className="space-y-4  bg-gray-50 shadow-lg rounded-md mb-24 p-4">
                                     <div className='font-semibold'>{moment(o?.createdAt).fromNow()}</div>
-                                    {/* {console.log(o)} */}
                                     {o?.products.map((p, index) => (
-                                        <div key={index} className="bg-white shadow-md p-4 flex flex-col md:flex-row justify-between items-center">
+                                        <div key={index} className="bg-white shadow-md md:p-4 p-2 flex flex-col md:flex-row justify-between md:items-center">
                                             <div className="flex items-center space-x-4">
-                                                <img src={images[p._id] ? '/' + images[p._id] : `https://placehold.co/100x100`} alt="Product image" className="w-24 h-24 rounded-md mr-4" crossOrigin="anonymous" />
+                                                <img src={images[p._id] ? '/' + images[p._id] : `https://placehold.co/100x100`} alt="Product image" className="md:w-24 md:h-24 w-12 h-12 rounded-md mr-4" crossOrigin="anonymous" />
                                                 <div>
                                                     <div className="text-zinc-500">product id: {p._id} </div>
                                                     <div className="text-xl font-bold">{p.name}</div>

@@ -11,15 +11,18 @@ import { toast } from 'react-toastify';
 
 
 
+
 const Cart = () => {
     const { auth, setAuth } = useAuth();
     const { cart, setCart } = useCart();
-    const { images , setWishList , wishList } = useProduct();
+    const { images, setWishList, wishList } = useProduct();
     const navigate = useNavigate();
     const [clientToken, setClientToken] = useState('');
     const [instance, setInstance] = useState(null); // Changed to null
     // const dropinRef = useRef(null);
     const [loading, setLoading] = useState(false);
+    const [quantity, setQuantity] = useState(null);
+
 
     const user = localStorage.getItem('auth');
     const parsedData = JSON.parse(user)
@@ -51,31 +54,37 @@ const Cart = () => {
     };
 
     // Move to wish List 
-    const wishCartItem =(id)=>{
+    const wishCartItem = (id) => {
         let myCart = [...cart];
         let wishItem;
 
-        let newCart = myCart.filter((item=> {
-                if( item._id !== id){
-                    return true;
-                }else{
-                    wishItem = item;
-                    return false;
-                }
+        let newCart = myCart.filter((item => {
+            if (item._id !== id) {
+                return true;
+            } else {
+                wishItem = item;
+                return false;
+            }
         }));
         setCart(newCart);
 
-        if(wishItem){
-            setWishList((pre)=> [...pre , wishItem])
+        localStorage.setItem('cart', JSON.stringify(newCart))
+
+        if (wishItem) {
+            // Update the wishlist state
+            setWishList((prev) => [...prev, wishItem]);
+            
+            // Retrieve current wishlist from local storage or create a new one if it doesn't exist
+            let currentWishList = JSON.parse(localStorage.getItem('wishList')) || [];
+            
+            // Add the new item to the wishlist
+            currentWishList.push(wishItem);
+            
+            // Update the wishlist in local storage
+            localStorage.setItem('wishList', JSON.stringify(currentWishList));
         }
     };
 
-    useEffect(() => {
-        if(wishList){
-            console.log(wishList);
-        }
-    })
-    
     //get payment token
     const getToken = async () => {
         try {
@@ -129,21 +138,31 @@ const Cart = () => {
         }
     }
 
+    //handle on increment 
+    const handleOnIncrement = (id) => {
+        if (cart.length > 0) {
+            setCart(cart.map((item) => item._id === id ? { ...item, quantity: item.quantity + 1 } : item));
+        }
+    }
+
+    //handle on Decrement
+    const handleOnDecrement = (id) => {
+        if (cart.length > 0) {
+            setCart(cart.map((item) => item._id === id ? { ...item, quantity: item.quantity > 1 ? item.quantity - 1 : 1 } : item));
+        }
+    }
+
 
     useEffect(() => {
         getToken();
-        // console.log(clientToken);  
     }, [auth?.token])
 
     return (
         <Layout>
             <div className="pt-24">
-                <div className="flex flex-col w-full items-center p-4 bg-zinc-100 dark:bg-zinc-900 min-h-screen">
-                    {/* <h1 className="text-3xl font-bold mb-4">Hello {auth?.token && auth?.user?.name}</h1> */}
+                {cart.length >= 1 ? <div className="flex flex-col w-full items-center p-4 bg-zinc-100 dark:bg-zinc-900 min-h-screen">
+
                     <h1 className="text-3xl font-bold mb-4">Shopping Cart</h1>
-                    {cart?.length > 1 ?
-                        `You have ${cart.length} items in your cart ${auth?.token ? "" : 'Please login to checkout'}` :
-                        'Your cart is empty'}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
                         <div className="bg-white dark:bg-zinc-800 shadow-md rounded-lg p-4">
                             <h2 className="text-xl font-semibold mb-4">Cart ({cart.length < 1 ? '0' : cart.length} items)</h2>
@@ -157,10 +176,10 @@ const Cart = () => {
                                             <p className="text-zinc-600 dark:text-zinc-400">Color: Blue</p>
                                             <p className="text-zinc-600 dark:text-zinc-400">Size: M</p>
                                             <div className="flex items-center mt-2">
-                                                <button onClick={() => removeCartItem(p._id)} className="bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 px-2 py-1 rounded-md mr-2">
+                                                <button onClick={() => removeCartItem(p._id)} className="bg-red-600  text-white  px-2 py-1 rounded-md mr-2">
                                                     Remove Item
                                                 </button>
-                                                <button  onClick={() => wishCartItem(p._id)}   className="bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 px-2 py-1 rounded-md">
+                                                <button onClick={() => wishCartItem(p._id)} className="bg-slate-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 px-2 py-1 rounded-md">
                                                     Move To Wish List
                                                 </button>
                                             </div>
@@ -168,11 +187,11 @@ const Cart = () => {
                                     </div>
                                     <div className="flex items-center">
                                         <div className="flex items-center mr-4">
-                                            <button className="bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 px-2 py-1 rounded-md">
+                                            <button onClick={() => handleOnDecrement(p._id)} className="bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 px-2 py-1 rounded-md">
                                                 -
                                             </button>
-                                            <span className="mx-2">0</span>
-                                            <button className="bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 px-2 py-1 rounded-md">
+                                            <span className="mx-2">{quantity || (p.quantity ? p.quantity : 1)}</span>
+                                            <button onClick={() => handleOnIncrement(p._id)} className="bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 px-2 py-1 rounded-md">
                                                 +
                                             </button>
                                         </div>
@@ -217,7 +236,7 @@ const Cart = () => {
                             <div className="mb-4">
                                 <div className="flex justify-between">
                                     <span>Temporary amount</span>
-                                    <span>{totalPrice()}</span>
+                                    <span>{totalPrice()}</span> 
                                 </div>
                                 <div className="flex justify-between">
                                     <span>Shipping</span>
@@ -232,7 +251,7 @@ const Cart = () => {
                                     (
                                         <div className="flex justify-between">
                                             <span>Address</span>
-                                            <div onClick={() => navigate('/dashboard/user')} className='flex justify-between items-center gap-5' ><span  ><IoAddCircle /></span>Add Address</div>
+                                            <div onClick={() => navigate('/dashboard/user/profile')} className='flex justify-between items-center gap-5' ><span  ><IoAddCircle /></span>Add Address</div>
                                         </div>
                                     )}
                                 <div className="flex justify-between font-bold mt-2">
@@ -251,7 +270,7 @@ const Cart = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="bg-white w-1/2 mx-auto mt-4 dark:bg-zinc-800 shadow-md rounded-lg p-4">
+                    <div className="bg-white w-full md:w-[75%] mx-auto mt-4 dark:bg-zinc-800 shadow-md rounded-lg p-4">
                         <h2 className="text-xl font-semibold mb-4">The total amount of</h2>
                         <div id="dropin-container"></div>
                         {/* {clientToken ? (
@@ -275,7 +294,21 @@ const Cart = () => {
                         </button>
 
                     </div>
-                </div>
+                </div> :
+                    <div>
+                        <div className="flex flex-col items-center justify-center p-6 bg-card rounded-lg shadow-md">
+                            <h2 className="text-lg font-semibold text-foreground">Shopping Cart</h2>
+                            <div className="flex flex-col items-center mt-4">
+                                {/* <img src="/images/cart.png" alt="cartimage " /> */}
+                                <img aria-hidden="true" alt="empty-cart-illustration" src="https://openui.fly.dev/openui/150x150.svg?text=🛒" />
+                                <p className="mt-4 text-xl font-medium text-muted-foreground">Unfortunately, Your Cart is Empty</p>
+                                <p className="text-sm text-muted-foreground">Please Add Somethings in your Cart</p>
+                            </div>
+                            <button onClick={() => navigate('/')} className="mt-6 bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg">Continue Shopping</button>
+                        </div>
+
+                    </div>
+                }
             </div>
 
 

@@ -10,6 +10,7 @@ const randomString = require("randomstring");
 // const passwordResetModel = require('../models/resetPassword');
 // const { deleteFile } = require('../helper/deleteFile');
 const path = require("path");
+const { deleteFile } = require("../helper/deleteFile");
 // const { oneMinuteExpiry, threeMinuteExpiry } = require('../helper/otpValidator');
 
 const otpGernator = async () => {
@@ -29,12 +30,22 @@ const signupUser = async (req, res) => {
       });
     }
 
-    const { name, email, password, mobile, answer } = req.body;
+    const { name, email, password, mobile, answer  ,username } = req.body;
     const isExistUser = await userModel.findOne({ email });
+
     if (isExistUser) {
       return res.status(200).json({
         success: false,
         msg: "Email already registered",
+      });
+    }
+
+
+    const isExistUserByUsername = await userModel.findOne({ username });
+    if (isExistUserByUsername) {
+      return res.status(200).json({
+        success: false,
+        msg: "Username already taken",
       });
     }
 
@@ -46,6 +57,7 @@ const signupUser = async (req, res) => {
       mobile,
       answer,
       // image: 'images/' + req.file.filename
+      username,
     });
     const userData = await user.save();
 
@@ -346,6 +358,39 @@ const loginUser = async (req, res) => {
   }
 };
 
+//get All user
+const getAllUser = async (req, res) => {
+  try {
+    const users = await userModel.find();
+    return res.status(200).json({
+      success: true,
+      users,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      msg: error.message,
+    });
+  }
+};
+
+//delete user
+const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await userModel.findByIdAndDelete(id);
+    return res.status(200).json({ 
+      success: true,
+      user
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      msg: error.message,
+    });
+  }
+};
+
 //Profile
 const userProfile = async (req, res) => {
   try {
@@ -366,29 +411,33 @@ const userProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const { name, mobile, email, password, address } = req.body;
-    let data = { name, mobile, email, address };
-    console.log(address);
+    let data = { name, mobile, email, address  };
     const user_id = req.user.user._id;
+
+    console.log(name , req.file);
 
     // Handle file upload
     if (req.file) {
       data.image = "images/" + req.file.filename;
       const oldUser = await userModel.findOne({ _id: user_id });
-      const oldFilePath = path.join(__dirname, "../public/" + oldUser.image);
-      deleteFile(oldFilePath);
-    }
-
-    // Password validation and hashing
-    if (password) {
-      if (password.length < 6) {
-        return res.status(400).json({
-          success: false,
-          message: "Password must be at least 6 characters long",
-        });
+      let oldFilePath;
+      if(oldUser.image){
+         oldFilePath = path.join(__dirname, "../public/" + oldUser.image);
+         deleteFile(oldFilePath);
       }
-      const hashPassword = await bcrypt.hash(password, 10);
-      data.password = hashPassword;
     }
+    console.log(data.image);
+    // // Password validation and hashing
+    // if (password) {
+    //   if (password.length < 6) {
+    //     return res.status(400).json({
+    //       success: false,
+    //       message: "Password must be at least 6 characters long",
+    //     });
+    //   }
+    //   const hashPassword = await bcrypt.hash(password, 10);
+    //   data.password = hashPassword;
+    // }
 
     // Get current user data for fallback values
     const userData = await userModel.findById(user_id);
@@ -396,14 +445,14 @@ const updateProfile = async (req, res) => {
     data = {
       name: name || userData.name,
       mobile: mobile || userData.mobile,
-      email: email || userData.email,
+      email: email || userData.email, 
       address: address || userData.address,
       password: data.password || userData.password,
       image: data.image || userData.image,
     };
 
     const updatedUser = await userModel.findByIdAndUpdate(
-      user_id,
+        user_id,
       { $set: data },
       { new: true }
     );
@@ -662,14 +711,14 @@ const getOrder = async (req, res) => {
 //get all orders
 const getAllOrder = async (req, res) => {
   try {
-    console.log('Fetching orders with sorting:', { createdAt: -1 });
+    console.log("Fetching orders with sorting:", { createdAt: -1 });
 
     const orders = await orderModel
       .find({})
       .populate("products", "-image")
       .populate("buyer", "name")
       .sort({ createdAt: -1 });
-    
+
     return res.status(200).json({
       success: true,
       orders,
@@ -683,18 +732,21 @@ const getAllOrder = async (req, res) => {
   }
 };
 
-
 //Order status Update
-const orderStatus=async(req,res)=>{
+const orderStatus = async (req, res) => {
   try {
-    const {orderId} = req.params;
-    const {status} = req.body;
+    const { orderId } = req.params;
+    const { status } = req.body;
 
-    const orders  =await orderModel.findByIdAndUpdate(orderId , {status} , {new: true});
+    const orders = await orderModel.findByIdAndUpdate(
+      orderId,
+      { status },
+      { new: true }
+    );
     return res.status(200).json({
       success: true,
-      orders
-    })
+      orders,
+    });
   } catch (error) {
     return res.status(400).json({
       success: false,
@@ -702,7 +754,7 @@ const orderStatus=async(req,res)=>{
       message: "Error occurred while updating Status Of Order",
     });
   }
-}
+};
 module.exports = {
   signupUser,
   loginUser,
@@ -720,6 +772,8 @@ module.exports = {
   // sendOTP,
   // verfiyOTP,
   getOrder,
-  getAllOrder,  
+  getAllOrder,
   orderStatus,
+  getAllUser,
+  deleteUser,
 };

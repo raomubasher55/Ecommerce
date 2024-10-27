@@ -40,6 +40,8 @@ const storage = multer.diskStorage({
   router.post('/login' ,loginValidator ,userController.loginUser );
 
   //authenticatied routes
+  router.get('/get-all-user' , isLogined , isAdmin  , userController.getAllUser);
+  router.delete('/delete-user/:id' , isLogined , isAdmin , userController.deleteUser)
   router.get('/profile' ,isLogined , userController.userProfile);
   router.put('/updateprofile' , isLogined ,updateProfileValidator , upload.single('image') , userController.updateProfile );
   router.post('/refreshToken' ,isLogined, userController.refreshToken);
@@ -66,7 +68,8 @@ const storage = multer.diskStorage({
   router.get('/all-orders' , isLogined  ,isAdmin , userController.getAllOrder);
 
   //status Update
-  router.put('/order-status/:orderId' , isLogined , isAdmin , userController.orderStatus)
+  router.put('/order-status/:orderId' , isLogined , isAdmin , userController.orderStatus);
+
 
   //otp verification routes
 //   router.post('/sendotp'  , otpMailValidator , userController.sendOTP )
